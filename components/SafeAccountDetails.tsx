@@ -2,7 +2,6 @@ import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutli
 import {
   Alert,
   AlertTitle,
-  Box,
   Button,
   CircularProgress,
   Paper,
@@ -12,7 +11,7 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { CreateCredential } from "../lib/types";
 import { signMsg } from "../lib/SignMsg";
-import { Hex, isHex, keccak256 } from "viem";
+import { isHex, keccak256 } from "viem";
 import TextField from "@mui/material/TextField";
 
 type props = {
@@ -21,7 +20,6 @@ type props = {
 
 function SafeAccountDetails({ passkey }: props) {
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  // const [safeAddress, setSafeAddress] = useState<string>();
   const [isAlert, setIsAlert] = useState<boolean>(false);
   const [isSafeDeployed, setIsSafeDeployed] = useState<boolean>();
   const [sig, setSig] = useState<string>();

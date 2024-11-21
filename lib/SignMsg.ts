@@ -8,7 +8,6 @@ export const signMsg = async (
   operationHash: Hex
 ): Promise<string> => {
   const msgToSign = encodePacked(["bytes32"], [operationHash]);
-  // const msgToSign = encodePacked(["address"], [operationHash]);
   const credentials: P256Credential = (await get(msgToSign)) as P256Credential;
   const signature = encodeAbiParameters(
     [

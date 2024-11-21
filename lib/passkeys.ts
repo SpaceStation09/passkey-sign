@@ -47,7 +47,7 @@ export async function createPasskey(): Promise<CreateCredential> {
     throw Error("Passkey creation failed: No credential was returned.");
   }
 
-  let cred = passkeyCredential as unknown as {
+  const cred = passkeyCredential as unknown as {
     rawId: ArrayBuffer;
     response: {
       clientDataJSON: ArrayBuffer;

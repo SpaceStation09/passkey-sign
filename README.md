@@ -1,4 +1,4 @@
-# Passkey Sign 
+# Passkey Sign
 
 A test-oriented front-end to help generate passkey signature on given calldata.
 
