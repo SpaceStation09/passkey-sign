@@ -5,9 +5,11 @@ import { Hex } from "webauthn-p256";
 
 export const signMsg = async (
   passkey: CreateCredential,
-  operationHash: Hex
+  msgToSignRaw: Hex
 ): Promise<string> => {
-  const msgToSign = encodePacked(["bytes32"], [operationHash]);
+  console.log("X: ", passkey.pubKey.x);
+  console.log("Y: ", passkey.pubKey.y);
+  const msgToSign = encodePacked(["bytes"], [msgToSignRaw]);
   const credentials: P256Credential = (await get(msgToSign)) as P256Credential;
   const signature = encodeAbiParameters(
     [

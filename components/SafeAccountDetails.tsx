@@ -11,7 +11,7 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { CreateCredential } from "../lib/types";
 import { signMsg } from "../lib/SignMsg";
-import { isHex, keccak256 } from "viem";
+import { encodePacked, isAddress, isHex, keccak256 } from "viem";
 import TextField from "@mui/material/TextField";
 
 type props = {
@@ -23,6 +23,8 @@ function SafeAccountDetails({ passkey }: props) {
   const [isAlert, setIsAlert] = useState<boolean>(false);
   const [isSafeDeployed, setIsSafeDeployed] = useState<boolean>();
   const [sig, setSig] = useState<string>();
+  const [dest, setDest] = useState("");
+  const [value, setValue] = useState("");
   const [opCalldata, setOpCalldata] = useState("");
 
   const showSafeInfo = useCallback(async () => {
@@ -39,21 +41,34 @@ function SafeAccountDetails({ passkey }: props) {
   }, [showSafeInfo]);
 
   async function handleSignOnExecution() {
-    if (!isHex(opCalldata)) {
+    if (!isHex(opCalldata) || !isAddress(dest)) {
       setIsAlert(true);
     } else {
       setIsLoading(true);
-      const msgHash = keccak256(opCalldata);
-      const signature = await signMsg(passkey, msgHash);
+      const msgToSign = encodePacked(
+        ["address", "uint", "bytes"],
+        [dest, BigInt(value), opCalldata]
+      );
+      const signature = await signMsg(passkey, msgToSign);
       setIsLoading(false);
       setIsSafeDeployed(true);
       setSig(signature);
     }
   }
 
-  async function handleInputChange(e: any) {
+  async function handleOpCalldataChange(e: any) {
     setSig("");
     setOpCalldata(e.target.value);
+  }
+
+  async function handleValueChange(e: any) {
+    setSig("");
+    setValue(e.target.value);
+  }
+
+  async function handleDestChange(e: any) {
+    setSig("");
+    setDest(e.target.value);
   }
 
   return (
@@ -98,13 +113,38 @@ function SafeAccountDetails({ passkey }: props) {
 
           <TextField
             id="outlined-multiline-flexible"
+            label="Destination Address"
+            placeholder="0xDest"
+            fullWidth
+            multiline
+            maxRows={5}
+            value={dest}
+            onChange={handleDestChange}
+            style={{ margin: "10px" }}
+          ></TextField>
+
+          <TextField
+            id="outlined-multiline-flexible"
+            label="Value(wei)"
+            placeholder="0"
+            fullWidth
+            multiline
+            maxRows={5}
+            value={value}
+            style={{ margin: "10px" }}
+            onChange={handleValueChange}
+          ></TextField>
+
+          <TextField
+            id="outlined-multiline-flexible"
             label="Calldata"
             placeholder="0xYourCalldata"
             fullWidth
             multiline
             maxRows={5}
             value={opCalldata}
-            onChange={handleInputChange}
+            style={{ margin: "10px" }}
+            onChange={handleOpCalldataChange}
           ></TextField>
 
           {sig && (
